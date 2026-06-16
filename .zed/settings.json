@@ -1,0 +1,8 @@
+{
+  "languages": {
+    "Rust": {
+      "format_on_save": "on"
+    }
+  },
+  "disable_ai": true
+}
