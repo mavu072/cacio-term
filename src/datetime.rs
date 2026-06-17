@@ -1,12 +1,9 @@
 use chrono::{DateTime, Local};
 
-// Define datetime format using standard 'strftime' syntax specifiers
 // %A = Full weekday name (e.g., Monday)
 // %H:%M:%S = Hours, minutes, and seconds
 const FMT_24H: &str = "%A, %H:%M:%S";
-// Example Output: "Monday, 14:05:23"
 const FMT_12H: &str = "%A, %I:%M:%S %p";
-// Example Output: "Monday, 02:05:23 PM"
 
 pub fn local_datetime(hour_format: i8) -> String {
     // Get and format local datetime
@@ -38,10 +35,12 @@ mod tests {
         assert!(datetime_12h.contains("Monday"));
         assert!(datetime_12h.contains("Monday, 02:00:00"));
         assert!(datetime_12h.contains("PM"));
+        assert_eq!(datetime_12h, "Monday, 02:00:00 PM");
 
         let datetime_24h = format_datetime(mock_time, 24);
         assert!(datetime_24h.contains("Monday"));
         assert!(datetime_24h.contains("Monday, 14:00:00"));
         assert!(!datetime_24h.contains("PM"));
+        assert_eq!(datetime_12h, "Monday, 14:00:00");
     }
 }
