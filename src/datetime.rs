@@ -41,6 +41,6 @@ mod tests {
         assert!(datetime_24h.contains("Monday"));
         assert!(datetime_24h.contains("Monday, 14:00:00"));
         assert!(!datetime_24h.contains("PM"));
-        assert_eq!(datetime_12h, "Monday, 14:00:00");
+        assert_eq!(datetime_24h, "Monday, 14:00:00");
     }
 }
