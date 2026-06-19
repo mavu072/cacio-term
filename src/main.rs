@@ -11,7 +11,7 @@ use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
-    layout::{Alignment, Rect},
+    layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Stylize},
     symbols::border,
     text::{Line, Span, ToSpan},
@@ -23,7 +23,10 @@ use std::{io, time::Duration};
 pub struct App {
     brand: String,
     model: String,
-    datetime: String,
+    day: String,
+    year: String,
+    date_month: String,
+    clock: String,
     hour_format: i8,
     light_on: bool,
     light_timer: i8,
@@ -46,9 +49,6 @@ fn main() -> io::Result<()> {
 impl App {
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
         while self.exit == false {
-            // Live clock
-            self.datetime = local_datetime(self.hour_format);
-
             // Run background tasks concurrently
             self.run_background_tasks();
 
@@ -100,12 +100,23 @@ impl App {
         Ok(())
     }
 
+    fn switch_watch_modes(&mut self) {
+        todo!()
+    }
+
     fn adjust_clock(&mut self) {
         todo!()
     }
 
-    fn switch_watch_modes(&mut self) {
-        todo!()
+    fn update_live_clock(&mut self) {
+        // Get current time
+        let datetime = local_datetime(self.hour_format);
+
+        // Live clock functions
+        self.clock = datetime.0;
+        self.day = datetime.1;
+        self.year = datetime.2;
+        self.date_month = datetime.3;
     }
 
     fn toggle_hour_format(&mut self) {
@@ -132,6 +143,9 @@ impl App {
     }
 
     fn run_background_tasks(&mut self) {
+        // Update live clock
+        self.update_live_clock();
+
         // Handle light switch
         self.light_off();
     }
@@ -139,19 +153,18 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        // Get datetime
-        let datetime = self.datetime.to_span();
+        // Alarm Func
+        let alarm_functions = "SNZ      ALM     SIG";
+
         // Get light on/off background color
         let bg_col = if self.light_on {
-            Color::Green
+            Color::Rgb(0, 175, 80)
         } else {
-            Color::Black
+            Color::Rgb(25, 46, 17)
         };
 
-        // Title
-        // Before: `vec![...]` allocated temporary chunks of heap memory dozens of times a second.
-        // Now: `[...]` stays flat on the stack, and `.as_ref()` borrows it as a slice with zero heap overhead.
-        let title = Line::from(
+        // Header
+        let header = Line::from(
             [
                 Span::raw(" "),
                 self.brand.to_span(),
@@ -162,37 +175,95 @@ impl Widget for &App {
             .as_ref(),
         );
 
-        // Bottom
-        let bottom = Line::from(
+        // Commands
+        let commands = Line::from(
             [
                 " Adjust ".into(),
                 "<A>".blue().bold(),
                 " Mode ".into(),
                 "<M>".blue().bold(),
                 " Light ".into(),
-                "<L>".blue().bold(),
+                "<L/Space>".blue().bold(),
                 " 12/24H ".into(),
                 "<H>".blue().bold(),
                 " Quit ".into(),
-                "<Q>".blue().bold(),
+                "<Q/Esc> ".blue().bold(),
             ]
             .as_ref(),
         );
 
-        // Block
-        let display_block = Block::bordered()
-            .title(title)
-            .title_alignment(Alignment::Center)
-            .title_bottom(bottom.centered())
+        // Header Block
+        let header_block = Block::bordered()
+            .title(header.centered())
             .border_set(border::THICK);
 
-        // Datetime Display
-        Paragraph::new(datetime)
+        // Commands Block
+        let commands_block = Block::bordered()
+            .title_bottom(commands.centered())
+            .border_set(border::THICK);
+
+        // Outer
+        let outer_layout = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(vec![
+                Constraint::Percentage(30),
+                Constraint::Percentage(40),
+                Constraint::Percentage(30),
+            ])
+            .split(area);
+
+        // Inner first
+        let inner_first_layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![Constraint::Percentage(75), Constraint::Percentage(25)])
+            .split(outer_layout[0]);
+
+        // Inner last
+        let inner_last_layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .split(outer_layout[2]);
+
+        // Day Display
+        Paragraph::new(self.day.to_span())
             .centered()
             .yellow()
             .bg(bg_col)
-            .block(display_block)
-            .render(area, buf);
+            .block(header_block)
+            .render(inner_first_layout[0], buf);
+
+        // Alarm Functions Display
+        Paragraph::new(alarm_functions)
+            .centered()
+            .yellow()
+            .bg(bg_col)
+            .block(Block::bordered().border_set(border::THICK))
+            .render(inner_first_layout[1], buf);
+
+        // Datetime Display
+        Paragraph::new(self.clock.to_span())
+            .centered()
+            .yellow()
+            .bold()
+            .bg(bg_col)
+            .block(commands_block)
+            .render(outer_layout[1], buf);
+
+        // Year Display
+        Paragraph::new(self.year.to_span())
+            .centered()
+            .yellow()
+            .bg(bg_col)
+            .block(Block::bordered().border_set(border::THICK))
+            .render(inner_last_layout[0], buf);
+
+        // Date/Month Display
+        Paragraph::new(self.date_month.to_span())
+            .centered()
+            .yellow()
+            .bg(bg_col)
+            .block(Block::bordered().border_set(border::THICK))
+            .render(inner_last_layout[1], buf);
     }
 }
 
@@ -210,7 +281,10 @@ mod tests {
         // Override defaults with manual values
         app.brand = "cacio".to_string();
         app.model = "term".to_string();
-        app.datetime = "Monday, 12:00:00".to_string();
+        app.clock = "12:00:00".to_string();
+        app.day = "Monday".to_string();
+        app.year = "2026".to_string();
+        app.date_month = "6-19".to_string();
         app.hour_format = 12;
         app.light_timer = 3;
 
@@ -234,7 +308,8 @@ mod tests {
 
         assert!(string_representation.contains("cacio"));
         assert!(string_representation.contains("term"));
-        assert!(string_representation.contains("Monday, 12:00:00"));
+        assert!(string_representation.contains("Monday"));
+        assert!(string_representation.contains("12:00:00"));
         assert!(string_representation.contains("Mode"));
         assert!(string_representation.contains("Light"));
         assert!(string_representation.contains("Quit"));
