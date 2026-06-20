@@ -15,7 +15,7 @@ use ratatui::{
     style::{Color, Stylize},
     symbols::border,
     text::{Line, Span, ToSpan},
-    widgets::{Block, Paragraph, Widget},
+    widgets::{Block, Borders, Padding, Paragraph, Widget},
 };
 use std::{io, time::Duration};
 
@@ -239,7 +239,11 @@ impl Widget for &App {
             .bold()
             .fg(fg_col)
             .bg(bg_col)
-            .block(Block::bordered().border_set(border::EMPTY))
+            .block(
+                Block::new()
+                    .borders(Borders::BOTTOM)
+                    .padding(Padding::top(1)),
+            )
             .render(inner_first_layout[1], buf);
 
         // Datetime Display
