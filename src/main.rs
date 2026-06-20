@@ -156,11 +156,11 @@ impl Widget for &App {
         // Alarm Func
         let alarm_functions = "SNZ      ALM     SIG";
 
-        // Get light on/off background color
-        let bg_col = if self.light_on {
-            Color::Rgb(0, 175, 80)
+        // Get light on/off color
+        let (fg_col, bg_col) = if self.light_on {
+            (Color::Rgb(0, 0, 0), Color::Rgb(80, 158, 49))
         } else {
-            Color::Rgb(25, 46, 17)
+            (Color::Rgb(0, 0, 0), Color::Rgb(43, 84, 27))
         };
 
         // Header
@@ -169,7 +169,7 @@ impl Widget for &App {
                 Span::raw(" "),
                 self.brand.to_span(),
                 Span::raw(" "),
-                self.model.to_span().red().bold(),
+                self.model.to_span().gray().bold(),
                 Span::raw(" "),
             ]
             .as_ref(),
@@ -179,15 +179,15 @@ impl Widget for &App {
         let commands = Line::from(
             [
                 " Adjust ".into(),
-                "<A>".blue().bold(),
+                "<A>".gray().bold(),
                 " Mode ".into(),
-                "<M>".blue().bold(),
+                "<M>".gray().bold(),
                 " Light ".into(),
-                "<L/Space>".blue().bold(),
+                "<L/Space>".gray().bold(),
                 " 12/24H ".into(),
-                "<H>".blue().bold(),
+                "<H>".gray().bold(),
                 " Quit ".into(),
-                "<Q/Esc> ".blue().bold(),
+                "<Q/Esc> ".gray().bold(),
             ]
             .as_ref(),
         );
@@ -195,17 +195,17 @@ impl Widget for &App {
         // Header Block
         let header_block = Block::bordered()
             .title(header.centered())
-            .border_set(border::THICK);
+            .border_set(border::ROUNDED);
 
         // Commands Block
         let commands_block = Block::bordered()
             .title_bottom(commands.centered())
-            .border_set(border::THICK);
+            .border_set(border::PLAIN);
 
         // Outer
         let outer_layout = Layout::default()
             .direction(Direction::Vertical)
-            .constraints(vec![
+            .constraints([
                 Constraint::Percentage(30),
                 Constraint::Percentage(40),
                 Constraint::Percentage(30),
@@ -215,19 +215,20 @@ impl Widget for &App {
         // Inner first
         let inner_first_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Percentage(75), Constraint::Percentage(25)])
+            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(outer_layout[0]);
 
         // Inner last
         let inner_last_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
             .split(outer_layout[2]);
 
         // Day Display
         Paragraph::new(self.day.to_span())
             .centered()
-            .yellow()
+            .bold()
+            .fg(fg_col)
             .bg(bg_col)
             .block(header_block)
             .render(inner_first_layout[0], buf);
@@ -235,16 +236,17 @@ impl Widget for &App {
         // Alarm Functions Display
         Paragraph::new(alarm_functions)
             .centered()
-            .yellow()
+            .bold()
+            .fg(fg_col)
             .bg(bg_col)
-            .block(Block::bordered().border_set(border::THICK))
+            .block(Block::bordered().border_set(border::EMPTY))
             .render(inner_first_layout[1], buf);
 
         // Datetime Display
         Paragraph::new(self.clock.to_span())
             .centered()
-            .yellow()
             .bold()
+            .fg(fg_col)
             .bg(bg_col)
             .block(commands_block)
             .render(outer_layout[1], buf);
@@ -252,17 +254,19 @@ impl Widget for &App {
         // Year Display
         Paragraph::new(self.year.to_span())
             .centered()
-            .yellow()
+            .bold()
+            .fg(fg_col)
             .bg(bg_col)
-            .block(Block::bordered().border_set(border::THICK))
+            .block(Block::bordered().border_set(border::PLAIN))
             .render(inner_last_layout[0], buf);
 
         // Date/Month Display
         Paragraph::new(self.date_month.to_span())
             .centered()
-            .yellow()
+            .bold()
+            .fg(fg_col)
             .bg(bg_col)
-            .block(Block::bordered().border_set(border::THICK))
+            .block(Block::bordered().border_set(border::PLAIN))
             .render(inner_last_layout[1], buf);
     }
 }
