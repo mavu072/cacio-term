@@ -11,7 +11,7 @@ use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
     DefaultTerminal, Frame,
     buffer::Buffer,
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::{Constraint, Direction, Flex, Layout, Rect},
     style::{Color, Stylize},
     symbols::border,
     text::{Line, Span, ToSpan},
@@ -153,8 +153,10 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
+        // === SETUP ===
+
         // Alarm Func
-        let alarm_functions = "SNZ      ALM     SIG";
+        let alarm_functions = "SNZ  ALM  SIG";
 
         // Get light on/off color
         let (fg_col, bg_col) = if self.light_on {
@@ -192,37 +194,65 @@ impl Widget for &App {
             .as_ref(),
         );
 
-        // Header Block
-        let header_block = Block::bordered()
+        // === LAYOUT ===
+
+        // Outer casing
+        let outer_casing = Block::bordered()
+            .border_set(border::THICK)
+            .fg(Color::Gray)
             .title(header.centered())
-            .border_set(border::ROUNDED);
+            .title_bottom(commands.centered());
 
-        // Commands Block
-        let commands_block = Block::bordered()
-            .title_bottom(commands.centered())
-            .border_set(border::PLAIN);
+        // Shrink active drawing canvas area inside the border wall boundary
+        let inner_area = outer_casing.inner(area);
 
-        // Outer
-        let outer_layout = Layout::default()
+        // Render the casing onto the full screen area
+        outer_casing.render(area, buf);
+
+        // V-center: Float the entire watch module vertically
+        let total_height = 9; // cells
+        let vertical_center = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Length(total_height)])
+            .flex(Flex::Center)
+            .split(inner_area); // Use inner area
+
+        // H-center: Force the main module workspace to be exactly 40 cells wide and centered
+        let horizontal_center = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Length(40)]) // Matches your core watch layout width
+            .flex(Flex::Center)
+            .split(vertical_center[0]);
+
+        let fractional_height = total_height / 3; // total_height/number of rows
+        let rows = Layout::default()
             .direction(Direction::Vertical)
             .constraints([
-                Constraint::Percentage(30),
-                Constraint::Percentage(40),
-                Constraint::Percentage(30),
+                Constraint::Length(fractional_height),
+                Constraint::Length(fractional_height),
+                Constraint::Length(fractional_height),
             ])
-            .split(area);
+            .split(horizontal_center[0]);
 
         // Inner first
         let inner_first_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
-            .split(outer_layout[0]);
+            .constraints([Constraint::Length(20), Constraint::Length(20)])
+            .split(rows[0]);
+
+        // Inner second
+        let inner_second_layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints([Constraint::Length(40)])
+            .split(rows[1]);
 
         // Inner last
         let inner_last_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Percentage(50), Constraint::Percentage(50)])
-            .split(outer_layout[2]);
+            .constraints([Constraint::Length(20), Constraint::Length(20)])
+            .split(rows[2]);
+
+        // === DISPLAYS ===
 
         // Day Display
         Paragraph::new(self.day.to_span())
@@ -230,7 +260,7 @@ impl Widget for &App {
             .bold()
             .fg(fg_col)
             .bg(bg_col)
-            .block(header_block)
+            .block(Block::bordered().border_set(border::PLAIN))
             .render(inner_first_layout[0], buf);
 
         // Alarm Functions Display
@@ -252,8 +282,8 @@ impl Widget for &App {
             .bold()
             .fg(fg_col)
             .bg(bg_col)
-            .block(commands_block)
-            .render(outer_layout[1], buf);
+            .block(Block::bordered().border_set(border::PLAIN))
+            .render(inner_second_layout[0], buf);
 
         // Year Display
         Paragraph::new(self.year.to_span())
