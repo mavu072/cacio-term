@@ -209,18 +209,21 @@ impl Widget for &App {
         // Render the casing onto the full screen area
         outer_casing.render(area, buf);
 
-        // V-center: Float the entire watch module vertically
+        // Watch height and width
         let total_height = 9; // cells
+        let total_width = 30;
+
+        // V-center: Float the entire watch module vertically.
         let vertical_center = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Length(total_height)])
             .flex(Flex::Center)
             .split(inner_area); // Use inner area
 
-        // H-center: Force the main module workspace to be exactly 40 cells wide and centered
+        // H-center: Set width size and center it.
         let horizontal_center = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Length(40)]) // Matches your core watch layout width
+            .constraints([Constraint::Length(total_width)])
             .flex(Flex::Center)
             .split(vertical_center[0]);
 
@@ -235,21 +238,28 @@ impl Widget for &App {
             .split(horizontal_center[0]);
 
         // Inner first
+        let franctional_width = total_width / 2; // total_width/number of columns
         let inner_first_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Length(20), Constraint::Length(20)])
+            .constraints([
+                Constraint::Length(franctional_width),
+                Constraint::Length(franctional_width),
+            ])
             .split(rows[0]);
 
         // Inner second
         let inner_second_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Length(40)])
+            .constraints([Constraint::Length(total_width)])
             .split(rows[1]);
 
         // Inner last
         let inner_last_layout = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints([Constraint::Length(20), Constraint::Length(20)])
+            .constraints([
+                Constraint::Length(franctional_width),
+                Constraint::Length(franctional_width),
+            ])
             .split(rows[2]);
 
         // === DISPLAYS ===
@@ -276,7 +286,7 @@ impl Widget for &App {
             )
             .render(inner_first_layout[1], buf);
 
-        // Datetime Display
+        // Clock Display
         Paragraph::new(self.clock.to_span())
             .centered()
             .bold()
