@@ -19,10 +19,45 @@ use ratatui::{
 };
 use std::{io, time::Duration};
 
+// Entrypoint
+fn main() -> io::Result<()> {
+    // Create app with defaults
+    let mut app = App::default();
+
+    // Override specific fields with global watch constants
+    app.brand = String::from(WTC_BRAND);
+    app.model = String::from(WTC_MODEL);
+    app.hour_format = DEFAULT_HOUR_FORMAT;
+
+    // Run app
+    ratatui::run(|terminal| app.run(terminal))
+}
+
+#[derive(Debug, Default)]
+enum WatchMode {
+    #[default]
+    Timekeeping,
+    Alarm,
+    Stopwatch,
+    DualTime,
+}
+
+impl WatchMode {
+    fn as_str(&self) -> &'static str {
+        match self {
+            WatchMode::Timekeeping => "TM",
+            WatchMode::Alarm => "AL",
+            WatchMode::Stopwatch => "ST",
+            WatchMode::DualTime => "DT",
+        }
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct App {
     brand: String,
     model: String,
+    active_mode: WatchMode,
     day: String,
     year: String,
     date_month: String,
@@ -31,19 +66,6 @@ pub struct App {
     light_on: bool,
     light_timer: i8,
     exit: bool,
-}
-
-fn main() -> io::Result<()> {
-    // Create app with defaults
-    let mut app = App::default();
-
-    // Override specific fields with your global watch constants
-    app.brand = String::from(WTC_BRAND);
-    app.model = String::from(WTC_MODEL);
-    app.hour_format = DEFAULT_HOUR_FORMAT;
-
-    // Run app
-    ratatui::run(|terminal| app.run(terminal))
 }
 
 impl App {
@@ -70,6 +92,43 @@ impl App {
         frame.render_widget(self, frame.area());
     }
 
+    fn header(&self) -> Line<'static> {
+        // Returns the program header using a cheap borrowed array.
+        // Uses same principle as `key_commands` function.
+        Line::from(
+            [
+                Span::raw(" "),
+                Span::raw(self.brand.to_string()),
+                Span::raw(" "),
+                Span::raw(self.model.to_string()).gray().bold(),
+                Span::raw(" "),
+            ]
+            .as_ref(),
+        )
+    }
+
+    fn key_commands(&self) -> Line<'static> {
+        // Returns the key commands.
+        // 1. Creates a local fixed-size stack array and coerces it into a reference.
+        // 2. The array is borrowed and no heap memory allocation is required.
+        // 3. Uses 'static for lifetime binding because the strings must live for the entire duration of the program.
+        Line::from(
+            [
+                " Adjust ".into(),
+                "<A>".gray().bold(),
+                " Mode ".into(),
+                "<M>".gray().bold(),
+                " Light ".into(),
+                "<L/Space>".gray().bold(),
+                " 12/24H ".into(),
+                "<H>".gray().bold(),
+                " Quit ".into(),
+                "<Q/Esc> ".gray().bold(),
+            ]
+            .as_ref(),
+        )
+    }
+
     fn handle_events(&mut self) -> io::Result<()> {
         // Poll the terminal input stream for 100 milliseconds.
         // If no keys are pressed within 100ms, it skips this block cleanly and exits early.
@@ -94,14 +153,24 @@ impl App {
             KeyCode::Char('h') => self.toggle_hour_format(),
             KeyCode::Char('l') | KeyCode::Backspace | KeyCode::Char(' ') => self.light_on(),
             KeyCode::Char('q') | KeyCode::Esc => self.exit(),
-            _ => {} // Left empty so random key slips don't instantly close your app,
+            _ => {} // Left empty so random key slips don't instantly close the app,
         }
 
         Ok(())
     }
 
     fn switch_watch_modes(&mut self) {
-        todo!()
+        // Deterministic mode switching sequence
+        match self.active_mode {
+            WatchMode::Timekeeping => self.switch_mode(WatchMode::Alarm),
+            WatchMode::Alarm => self.switch_mode(WatchMode::Stopwatch),
+            WatchMode::Stopwatch => self.switch_mode(WatchMode::DualTime),
+            WatchMode::DualTime => self.switch_mode(WatchMode::Timekeeping),
+        }
+    }
+
+    fn switch_mode(&mut self, mode: WatchMode) {
+        self.active_mode = mode;
     }
 
     fn adjust_clock(&mut self) {
@@ -142,6 +211,18 @@ impl App {
         }
     }
 
+    fn get_colors(&self) -> (Color, Color) {
+        // Get light on/off color
+
+        let (fg_col, bg_col) = if self.light_on {
+            (Color::Rgb(0, 0, 0), Color::Rgb(80, 158, 49))
+        } else {
+            (Color::Rgb(0, 0, 0), Color::Rgb(43, 84, 27))
+        };
+
+        (fg_col, bg_col)
+    }
+
     fn run_background_tasks(&mut self) {
         // Update live clock
         self.update_live_clock();
@@ -151,167 +232,135 @@ impl App {
     }
 }
 
+fn draw_lcd(
+    bg: Color,
+    fg: Color,
+    area: Rect,
+    buf: &mut Buffer,
+) -> ([Rect; 2], [Rect; 1], [Rect; 2]) {
+    // Creates a three layer layout and forces each layer to return a fixed sized array.
+
+    // Watch LCD height and width
+    let lcd_height = 9; // cells
+    let lcd_width = 30;
+
+    let fractional_height = lcd_height / 3; // total_height/number of rows
+    let franctional_width = lcd_width / 2; // total_width/number of columns
+
+    // V-center: Float the entire watch module vertically.
+    let vertical_center = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([Constraint::Length(lcd_height)])
+        .flex(Flex::Center)
+        .split(area); // Use inner area
+
+    // H-center: Set width size and center it.
+    let horizontal_center = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Length(lcd_width)])
+        .flex(Flex::Center)
+        .split(vertical_center[0]);
+
+    // Fill the LCD with BG and define FG
+    Block::new().bg(bg).fg(fg).render(horizontal_center[0], buf);
+
+    // Rows
+    let rows = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints([
+            Constraint::Length(fractional_height),
+            Constraint::Length(fractional_height),
+            Constraint::Length(fractional_height),
+        ])
+        .split(horizontal_center[0]);
+
+    // Inner first
+    let inner_first_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Length(franctional_width),
+            Constraint::Length(franctional_width),
+        ])
+        .areas(rows[0]);
+
+    // Inner second
+    let inner_second_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Length(lcd_width)])
+        .areas(rows[1]);
+
+    // Inner third
+    let inner_third_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([
+            Constraint::Length(franctional_width),
+            Constraint::Length(franctional_width),
+        ])
+        .areas(rows[2]);
+
+    (inner_first_layout, inner_second_layout, inner_third_layout)
+}
+
+fn draw_paragraph(text: &str, optional_block: Option<Block>, area: Rect, buf: &mut Buffer) {
+    let block = match optional_block {
+        Some(unwrapped) => unwrapped, // Return unwrapped block
+        None => Block::bordered().border_set(border::PLAIN),
+    };
+
+    Paragraph::new(text)
+        .centered()
+        .bold()
+        .block(block)
+        .render(area, buf);
+}
+
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         // === SETUP ===
+        // todo implement self.active_mode;
 
-        // Alarm Func
+        // Alarm Func: todo implement
         let alarm_functions = "SNZ  ALM  SIG";
 
-        // Get light on/off color
-        let (fg_col, bg_col) = if self.light_on {
-            (Color::Rgb(0, 0, 0), Color::Rgb(80, 158, 49))
-        } else {
-            (Color::Rgb(0, 0, 0), Color::Rgb(43, 84, 27))
-        };
-
-        // Header
-        let header = Line::from(
-            [
-                Span::raw(" "),
-                self.brand.to_span(),
-                Span::raw(" "),
-                self.model.to_span().gray().bold(),
-                Span::raw(" "),
-            ]
-            .as_ref(),
-        );
-
-        // Commands
-        let commands = Line::from(
-            [
-                " Adjust ".into(),
-                "<A>".gray().bold(),
-                " Mode ".into(),
-                "<M>".gray().bold(),
-                " Light ".into(),
-                "<L/Space>".gray().bold(),
-                " 12/24H ".into(),
-                "<H>".gray().bold(),
-                " Quit ".into(),
-                "<Q/Esc> ".gray().bold(),
-            ]
-            .as_ref(),
-        );
+        // Foreground and Background colors
+        let (fg_col, bg_col) = self.get_colors();
 
         // === LAYOUT ===
-
-        // Outer casing
-        let outer_casing = Block::bordered()
+        // Full screen area
+        let full_area = Block::bordered()
             .border_set(border::THICK)
             .fg(Color::Gray)
-            .title(header.centered())
-            .title_bottom(commands.centered());
+            .title(self.header().centered())
+            .title_bottom(self.key_commands().centered());
 
-        // Shrink active drawing canvas area inside the border wall boundary
-        let inner_area = outer_casing.inner(area);
+        // Define the watch LCD area within the full screen area
+        let lcd_area = full_area.inner(area);
 
-        // Render the casing onto the full screen area
-        outer_casing.render(area, buf);
+        full_area.render(area, buf);
 
-        // Watch height and width
-        let total_height = 9; // cells
-        let total_width = 30;
-
-        // V-center: Float the entire watch module vertically.
-        let vertical_center = Layout::default()
-            .direction(Direction::Vertical)
-            .constraints([Constraint::Length(total_height)])
-            .flex(Flex::Center)
-            .split(inner_area); // Use inner area
-
-        // H-center: Set width size and center it.
-        let horizontal_center = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([Constraint::Length(total_width)])
-            .flex(Flex::Center)
-            .split(vertical_center[0]);
-
-        let fractional_height = total_height / 3; // total_height/number of rows
-        let rows = Layout::default()
-            .direction(Direction::Vertical)
-            .constraints([
-                Constraint::Length(fractional_height),
-                Constraint::Length(fractional_height),
-                Constraint::Length(fractional_height),
-            ])
-            .split(horizontal_center[0]);
-
-        // Inner first
-        let franctional_width = total_width / 2; // total_width/number of columns
-        let inner_first_layout = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([
-                Constraint::Length(franctional_width),
-                Constraint::Length(franctional_width),
-            ])
-            .split(rows[0]);
-
-        // Inner second
-        let inner_second_layout = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([Constraint::Length(total_width)])
-            .split(rows[1]);
-
-        // Inner last
-        let inner_last_layout = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([
-                Constraint::Length(franctional_width),
-                Constraint::Length(franctional_width),
-            ])
-            .split(rows[2]);
+        // Draw LCD screen & layout
+        let (first_row, second_row, last_row) = draw_lcd(bg_col, fg_col, lcd_area, buf);
 
         // === DISPLAYS ===
-
         // Day Display
-        Paragraph::new(self.day.to_span())
-            .centered()
-            .bold()
-            .fg(fg_col)
-            .bg(bg_col)
-            .block(Block::bordered().border_set(border::PLAIN))
-            .render(inner_first_layout[0], buf);
-
+        draw_paragraph(self.day.as_str(), None, first_row[0], buf);
         // Alarm Functions Display
-        Paragraph::new(alarm_functions)
-            .centered()
-            .bold()
-            .fg(fg_col)
-            .bg(bg_col)
-            .block(
+        draw_paragraph(
+            alarm_functions,
+            Some(
                 Block::new()
                     .borders(Borders::BOTTOM)
                     .padding(Padding::top(1)),
-            )
-            .render(inner_first_layout[1], buf);
-
+            ),
+            first_row[1],
+            buf,
+        );
         // Clock Display
-        Paragraph::new(self.clock.to_span())
-            .centered()
-            .bold()
-            .fg(fg_col)
-            .bg(bg_col)
-            .block(Block::bordered().border_set(border::PLAIN))
-            .render(inner_second_layout[0], buf);
-
+        draw_paragraph(self.clock.as_str(), None, second_row[0], buf);
         // Year Display
-        Paragraph::new(self.year.to_span())
-            .centered()
-            .bold()
-            .fg(fg_col)
-            .bg(bg_col)
-            .block(Block::bordered().border_set(border::PLAIN))
-            .render(inner_last_layout[0], buf);
-
+        draw_paragraph(self.year.as_str(), None, last_row[0], buf);
         // Date/Month Display
-        Paragraph::new(self.date_month.to_span())
-            .centered()
-            .bold()
-            .fg(fg_col)
-            .bg(bg_col)
-            .block(Block::bordered().border_set(border::PLAIN))
-            .render(inner_last_layout[1], buf);
+        draw_paragraph(self.date_month.as_str(), None, last_row[1], buf);
     }
 }
 
@@ -343,7 +392,7 @@ mod tests {
         let backend = TestBackend::new(50, 5);
         let mut terminal = Terminal::new(backend).unwrap();
 
-        // Draw using your standard closure execution flow
+        // Draw using standard closure execution
         terminal
             .draw(|frame| {
                 app.draw(frame);
