@@ -1,0 +1,17 @@
+matrix:
+  RUST_VERSION: [stable, beta, nightly]
+
+when:
+  event: pull_request
+
+steps:
+  test:
+    image: rust
+    environment:
+      CARGO_TERM_COLOR: always
+    commands:
+      - rustup default $RUST_VERSION
+      - cargo check -j 4
+      - cargo test -j 4
+      - rustup component add clippy
+      - cargo clippy -j 4 --all-targets --all-features -- -D warnings
