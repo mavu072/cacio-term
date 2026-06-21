@@ -1,38 +1,40 @@
-name: CI
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+# DISABLED Forgejo Actions require a self-hosted runner
+#
+# name: CI
+# on:
+#   pull_request:
+#     types: [opened, synchronize, reopened]
 
-jobs:
-  test:
-    runs-on: docker
-    container:
-      image: rust:1.80-slim
-    env:
-      CARGO_TERM_COLOR: always
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+# jobs:
+#   test:
+#     runs-on: docker
+#     container:
+#       image: rust:1.80-slim
+#     env:
+#       CARGO_TERM_COLOR: always
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
 
-      - name: Cache Cargo Dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#       - name: Cache Cargo Dependencies
+#         uses: actions/cache@v4
+#         with:
+#           path: |
+#             ~/.cargo/bin/
+#             ~/.cargo/registry/index/
+#             ~/.cargo/registry/cache/
+#             ~/.cargo/git/db/
+#             target/
+#           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Check Compile Errors
-        run: cargo check -j 4
+#       - name: Check Compile Errors
+#         run: cargo check -j 4
 
-      - name: Run Tests
-        run: cargo test -j 4
+#       - name: Run Tests
+#         run: cargo test -j 4
 
-      - name: Install Clippy
-        run: rustup component add clippy
+#       - name: Install Clippy
+#         run: rustup component add clippy
 
-      - name: Run Clippy Linter
-        run: cargo clippy -j 4 --all-targets --all-features -- -D warnings
+#       - name: Run Clippy Linter
+#         run: cargo clippy -j 4 --all-targets --all-features -- -D warnings
