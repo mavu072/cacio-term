@@ -1,9 +1,11 @@
 mod datetime;
 mod globals;
+mod sys_beep;
 
 // Locals
 use crate::datetime::local_datetime;
 use crate::globals::{DEFAULT_HOUR_FORMAT, WTC_BRAND, WTC_MODEL};
+use crate::sys_beep::system_beep;
 
 // Crates
 // use color_eyre::eyre::Ok;
@@ -209,6 +211,10 @@ impl App {
                 self.light_on = false; // Switch off once timer hits zero
             }
         }
+    }
+
+    fn alarm_beep() {
+        system_beep();
     }
 
     fn get_colors(&self) -> (Color, Color) {
