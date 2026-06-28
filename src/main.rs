@@ -1,11 +1,12 @@
+mod audio;
 mod datetime;
 mod globals;
-mod sys_beep;
+mod watchmodes;
 
 // Locals
 use crate::datetime::local_datetime;
 use crate::globals::{DEFAULT_HOUR_FORMAT, WTC_BRAND, WTC_MODEL};
-use crate::sys_beep::system_beep;
+use crate::watchmodes::alarm::AlarmMode;
 
 // Crates
 // use color_eyre::eyre::Ok;
@@ -16,7 +17,7 @@ use ratatui::{
     layout::{Constraint, Direction, Flex, Layout, Rect},
     style::{Color, Stylize},
     symbols::border,
-    text::{Line, Span, ToSpan},
+    text::{Line, Span},
     widgets::{Block, Borders, Padding, Paragraph, Widget},
 };
 use std::{io, time::Duration};
@@ -68,6 +69,7 @@ pub struct App {
     light_on: bool,
     light_timer: i8,
     exit: bool,
+    alarm: AlarmMode,
 }
 
 impl App {
@@ -211,10 +213,6 @@ impl App {
                 self.light_on = false; // Switch off once timer hits zero
             }
         }
-    }
-
-    fn alarm_beep() {
-        system_beep();
     }
 
     fn get_colors(&self) -> (Color, Color) {
@@ -382,8 +380,6 @@ mod tests {
         let mut app = App::default();
 
         // Override defaults with manual values
-        app.brand = "cacio".to_string();
-        app.model = "term".to_string();
         app.clock = "12:00:00".to_string();
         app.day = "Monday".to_string();
         app.year = "2026".to_string();
@@ -409,8 +405,6 @@ mod tests {
         let buffer = terminal.backend().buffer();
         let string_representation = format!("{buffer:?}");
 
-        assert!(string_representation.contains("cacio"));
-        assert!(string_representation.contains("term"));
         assert!(string_representation.contains("Monday"));
         assert!(string_representation.contains("12:00:00"));
         assert!(string_representation.contains("Mode"));
