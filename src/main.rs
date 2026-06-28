@@ -6,7 +6,7 @@ mod watchmodes;
 // Locals
 use crate::datetime::local_datetime;
 use crate::globals::{DEFAULT_HOUR_FORMAT, WTC_BRAND, WTC_MODEL};
-use crate::watchmodes::alarm::AlarmMode;
+use crate::watchmodes::alarm::Alarm;
 
 // Crates
 // use color_eyre::eyre::Ok;
@@ -69,7 +69,7 @@ pub struct App {
     light_on: bool,
     light_timer: i8,
     exit: bool,
-    alarm: AlarmMode,
+    alarm: Alarm,
 }
 
 impl App {

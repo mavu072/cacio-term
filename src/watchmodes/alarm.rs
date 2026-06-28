@@ -3,12 +3,12 @@ use crate::audio::beep::system_beep;
 use chrono::{DateTime, Datelike, Local};
 
 #[derive(Debug, Default)]
-pub struct AlarmMode {
+pub struct Alarm {
     alarm_time: DateTime<Local>,
     alarm_date: Option<DateTime<Local>>,
 }
 
-impl AlarmMode {
+impl Alarm {
     fn set_alarm_time(&mut self) {
         todo!();
     }
