@@ -249,7 +249,7 @@ fn draw_lcd(
     let lcd_width = 30;
 
     let fractional_height = lcd_height / 3; // total_height/number of rows
-    let franctional_width = lcd_width / 2; // total_width/number of columns
+    let fractional_width = lcd_width / 2; // total_width/number of columns
 
     // V-center: Float the entire watch module vertically.
     let vertical_center = Layout::default()
@@ -282,8 +282,8 @@ fn draw_lcd(
     let inner_first_layout = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Length(franctional_width),
-            Constraint::Length(franctional_width),
+            Constraint::Length(fractional_width),
+            Constraint::Length(fractional_width),
         ])
         .areas(rows[0]);
 
@@ -297,8 +297,8 @@ fn draw_lcd(
     let inner_third_layout = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Length(franctional_width),
-            Constraint::Length(franctional_width),
+            Constraint::Length(fractional_width),
+            Constraint::Length(fractional_width),
         ])
         .areas(rows[2]);
 
@@ -390,8 +390,9 @@ mod tests {
         // Debug log from Debug trait: run test with "cargo test -- --nocapture"
         println!("{:?}", app);
 
-        // Spawn a virtual terminal in memory with a mock 50x5 grid viewport
-        let backend = TestBackend::new(50, 5);
+        // Spawn a virtual terminal in memory with a mock grid viewport
+        // Adjust viewport size to fit actual watch LCD
+        let backend = TestBackend::new(100, 30);
         let mut terminal = Terminal::new(backend).unwrap();
 
         // Draw using standard closure execution
