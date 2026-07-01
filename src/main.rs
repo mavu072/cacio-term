@@ -6,7 +6,7 @@ mod watchmodes;
 // Locals
 use crate::datetime::local_datetime;
 use crate::globals::{DEFAULT_HOUR_FORMAT, WTC_BRAND, WTC_MODEL};
-use crate::watchmodes::alarm::Alarm;
+use crate::watchmodes::{alarm::Alarm, modes::WatchMode};
 
 // Crates
 // use color_eyre::eyre::Ok;
@@ -34,26 +34,6 @@ fn main() -> io::Result<()> {
 
     // Run app
     ratatui::run(|terminal| app.run(terminal))
-}
-
-#[derive(Debug, Default)]
-enum WatchMode {
-    #[default]
-    Timekeeping,
-    Alarm,
-    Stopwatch,
-    DualTime,
-}
-
-impl WatchMode {
-    fn prefix(&self) -> &'static str {
-        match self {
-            WatchMode::Timekeeping => "TM",
-            WatchMode::Alarm => "AL",
-            WatchMode::Stopwatch => "ST",
-            WatchMode::DualTime => "DT",
-        }
-    }
 }
 
 #[derive(Debug, Default)]
