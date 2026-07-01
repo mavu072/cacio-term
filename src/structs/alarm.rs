@@ -4,7 +4,7 @@ use chrono::{Local, NaiveDate, NaiveTime, Timelike};
 
 #[derive(Debug, Default)]
 pub struct Alarm {
-    time: NaiveTime,
+    time: Option<NaiveTime>,
     date: Option<NaiveDate>,
     has_triggered: bool,
 }
@@ -14,9 +14,9 @@ impl Alarm {
         self.has_triggered = false;
     }
 
-    fn set_time(&mut self, hour: u32, min: u32, sec: u32) -> bool {
+    pub fn set_time(&mut self, hour: u32, min: u32, sec: u32) -> bool {
         if let Some(valid_time) = NaiveTime::from_hms_opt(hour, min, sec) {
-            self.time = valid_time;
+            self.time = Some(valid_time);
             self.set_triggered_false();
             true
         } else {
@@ -24,7 +24,7 @@ impl Alarm {
         }
     }
 
-    fn set_date(&mut self, year: i32, month: u32, day: u32) -> bool {
+    pub fn set_date(&mut self, year: i32, month: u32, day: u32) -> bool {
         if let Some(valid_date) = NaiveDate::from_ymd_opt(year, month, day) {
             self.date = Some(valid_date);
             self.set_triggered_false();
@@ -34,20 +34,26 @@ impl Alarm {
         }
     }
 
-    fn trigger(&mut self) {
+    pub fn trigger(&mut self) {
+        // 1. Check time exists
+        let conf_time = match self.time {
+            Some(t) => t,
+            None => return,
+        };
+
         let now = Local::now();
         let current_date = now.date_naive();
         let current_time = now.time();
 
-        // 1. Check Date
+        // 2. Check Date
         if let Some(conf_date) = self.date {
             if conf_date != current_date {
                 return;
             }
         }
 
-        // 2. Check Time
-        let alarm_seconds = self.time.num_seconds_from_midnight();
+        // 3. Check Time
+        let alarm_seconds = conf_time.num_seconds_from_midnight();
         let current_seconds = current_time.num_seconds_from_midnight();
 
         if alarm_seconds == current_seconds {
@@ -73,9 +79,10 @@ mod tests {
         let mut alarm = Alarm::default();
         assert!(alarm.set_time(10, 30, 15));
 
-        assert_eq!(alarm.time.hour(), 10);
-        assert_eq!(alarm.time.minute(), 30);
-        assert_eq!(alarm.time.second(), 15);
+        let configured_time = alarm.time.unwrap();
+        assert_eq!(configured_time.hour(), 10);
+        assert_eq!(configured_time.minute(), 30);
+        assert_eq!(configured_time.second(), 15);
     }
 
     #[test]

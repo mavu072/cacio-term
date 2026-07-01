@@ -1,5 +1,6 @@
 use crate::datetime::local_datetime;
 use crate::render::tui::{draw_lcd, draw_paragraph};
+use crate::structs::modes::WatchMode::Timekeeping;
 use crate::structs::{alarm::Alarm, modes::WatchMode};
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -203,13 +204,15 @@ impl App {
 
         // Handle light switch
         self.light_off();
+
+        // Trigger alarm
+        self.alarm.trigger();
     }
 }
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         // === SETUP ===
-        // todo implement self.active_mode;
 
         // Alarm Func: todo implement
         let alarm_functions = "SNZ  ALM  SIG";
@@ -234,25 +237,28 @@ impl Widget for &App {
         let (first_row, second_row, last_row) = draw_lcd(bg_col, fg_col, lcd_area, buf);
 
         // === DISPLAYS ===
-        // Day Display
-        draw_paragraph(self.day.as_str(), None, first_row[0], buf);
-        // Alarm Functions Display
-        draw_paragraph(
-            alarm_functions,
-            Some(
-                Block::new()
-                    .borders(Borders::BOTTOM)
-                    .padding(Padding::top(1)),
-            ),
-            first_row[1],
-            buf,
-        );
-        // Clock Display
-        draw_paragraph(self.clock.as_str(), None, second_row[0], buf);
-        // Year Display
-        draw_paragraph(self.year.as_str(), None, last_row[0], buf);
-        // Date/Month Display
-        draw_paragraph(self.date_month.as_str(), None, last_row[1], buf);
+
+        if self.active_mode == Timekeeping {
+            // Day Display
+            draw_paragraph(self.day.as_str(), None, first_row[0], buf);
+            // Alarm Functions Display
+            draw_paragraph(
+                alarm_functions,
+                Some(
+                    Block::new()
+                        .borders(Borders::BOTTOM)
+                        .padding(Padding::top(1)),
+                ),
+                first_row[1],
+                buf,
+            );
+            // Clock Display
+            draw_paragraph(self.clock.as_str(), None, second_row[0], buf);
+            // Year Display
+            draw_paragraph(self.year.as_str(), None, last_row[0], buf);
+            // Date/Month Display
+            draw_paragraph(self.date_month.as_str(), None, last_row[1], buf);
+        }
     }
 }
 

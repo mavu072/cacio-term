@@ -17,3 +17,9 @@ impl WatchMode {
         }
     }
 }
+
+impl PartialEq for WatchMode {
+    fn eq(&self, other: &Self) -> bool {
+        self.prefix() == other.prefix()
+    }
+}
