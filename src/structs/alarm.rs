@@ -7,6 +7,7 @@ pub struct Alarm {
     time: Option<NaiveTime>,
     date: Option<NaiveDate>,
     has_triggered: bool,
+    active_alarm_types: Vec<AlarmType>,
 }
 
 impl Alarm {
@@ -66,6 +67,33 @@ impl Alarm {
             // Reset flag once second passes.
             self.set_triggered_false();
         }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum AlarmType {
+    Snooze,
+    Alarm,
+    Signal,
+}
+
+impl AlarmType {
+    const ALL: [AlarmType; 3] = [AlarmType::Snooze, AlarmType::Alarm, AlarmType::Signal];
+
+    pub fn prefix(&self) -> &'static str {
+        match self {
+            AlarmType::Snooze => "SNZ",
+            AlarmType::Alarm => "ALM",
+            AlarmType::Signal => "SIG",
+        }
+    }
+
+    // pub fn as_list() -> Vec<AlarmType> {
+    //     Self::ALL.to_vec()
+    // }
+
+    pub fn as_str_list() -> Vec<&'static str> {
+        Self::ALL.iter().map(|&alarm| alarm.prefix()).collect()
     }
 }
 

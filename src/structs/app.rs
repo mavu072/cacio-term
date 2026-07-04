@@ -1,5 +1,6 @@
 use crate::datetime::local_datetime;
 use crate::render::tui::{draw_lcd, draw_paragraph};
+use crate::structs::alarm::AlarmType;
 use crate::structs::{alarm::Alarm, modes::WatchMode};
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -211,13 +212,9 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        // === SETUP ===
-
-        // Alarm Func: todo implement
-        let alarm_functions = "SNZ  ALM  SIG";
-
         // Foreground and Background colors
-        let (fg_col, bg_col) = self.get_colors();
+        let get_colors = self.get_colors();
+        let (fg_col, bg_col) = get_colors;
 
         // === LAYOUT ===
         // Full screen area
@@ -235,14 +232,12 @@ impl Widget for &App {
         // Draw LCD screen & layout
         let (first_row, second_row, last_row) = draw_lcd(bg_col, fg_col, lcd_area, buf);
 
-        // === DISPLAYS ===
+        // === MODES ===
 
         if self.active_mode == WatchMode::Timekeeping {
-            // Day Display
-            draw_paragraph(self.day.as_str(), None, first_row[0], buf);
-            // Alarm Functions Display
+            draw_paragraph(&self.day.as_str().to_uppercase(), None, first_row[0], buf);
             draw_paragraph(
-                alarm_functions,
+                &AlarmType::as_str_list().join(" "),
                 Some(
                     Block::new()
                         .borders(Borders::BOTTOM)
@@ -251,11 +246,13 @@ impl Widget for &App {
                 first_row[1],
                 buf,
             );
-            // Clock Display
-            draw_paragraph(self.clock.as_str(), None, second_row[0], buf);
-            // Year Display
+            draw_paragraph(
+                self.clock.as_str(),
+                Some(Block::new().borders(Borders::ALL).bold()),
+                second_row[0],
+                buf,
+            );
             draw_paragraph(self.year.as_str(), None, last_row[0], buf);
-            // Date/Month Display
             draw_paragraph(self.date_month.as_str(), None, last_row[1], buf);
         }
 

@@ -3,7 +3,7 @@ use ratatui::{
     layout::{Constraint, Direction, Flex, Layout, Rect},
     style::{Color, Stylize},
     symbols::border,
-    widgets::{Block, Paragraph, Widget},
+    widgets::{Block, Padding, Paragraph, Widget},
 };
 
 pub fn draw_lcd(
@@ -83,7 +83,6 @@ pub fn draw_paragraph(text: &str, optional_block: Option<Block>, area: Rect, buf
 
     Paragraph::new(text)
         .centered()
-        .bold()
         .block(block)
         .render(area, buf);
 }
