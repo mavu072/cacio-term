@@ -1,6 +1,5 @@
 use crate::datetime::local_datetime;
 use crate::render::tui::{draw_lcd, draw_paragraph};
-use crate::structs::modes::WatchMode::Timekeeping;
 use crate::structs::{alarm::Alarm, modes::WatchMode};
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
@@ -89,8 +88,8 @@ impl App {
         // 3. Uses 'static for lifetime binding because the strings must live for the entire duration of the program.
         Line::from(
             [
-                " Adjust ".into(),
-                "<A>".gray().bold(),
+                // " Adjust ".into(), // todo: Unimplemented
+                // "<A>".gray().bold(),
                 " Mode ".into(),
                 "<M>".gray().bold(),
                 " Light ".into(),
@@ -238,7 +237,7 @@ impl Widget for &App {
 
         // === DISPLAYS ===
 
-        if self.active_mode == Timekeeping {
+        if self.active_mode == WatchMode::Timekeeping {
             // Day Display
             draw_paragraph(self.day.as_str(), None, first_row[0], buf);
             // Alarm Functions Display
@@ -258,6 +257,18 @@ impl Widget for &App {
             draw_paragraph(self.year.as_str(), None, last_row[0], buf);
             // Date/Month Display
             draw_paragraph(self.date_month.as_str(), None, last_row[1], buf);
+        }
+
+        if self.active_mode == WatchMode::Alarm {
+            draw_paragraph(self.active_mode.prefix(), None, first_row[0], buf);
+        }
+
+        if self.active_mode == WatchMode::Stopwatch {
+            draw_paragraph(self.active_mode.prefix(), None, first_row[0], buf);
+        }
+
+        if self.active_mode == WatchMode::DualTime {
+            draw_paragraph(self.active_mode.prefix(), None, first_row[0], buf);
         }
     }
 }

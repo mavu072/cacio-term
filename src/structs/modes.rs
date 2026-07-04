@@ -8,7 +8,7 @@ pub enum WatchMode {
 }
 
 impl WatchMode {
-    fn prefix(&self) -> &'static str {
+    pub fn prefix(&self) -> &'static str {
         match self {
             WatchMode::Timekeeping => "TM",
             WatchMode::Alarm => "AL",
