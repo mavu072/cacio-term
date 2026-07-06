@@ -308,7 +308,7 @@ mod tests {
         let buffer = terminal.backend().buffer();
         let string_representation = format!("{buffer:?}");
 
-        assert!(string_representation.contains("Monday"));
+        assert!(string_representation.contains(&"Monday".to_uppercase()));
         assert!(string_representation.contains("12:00:00"));
         assert!(string_representation.contains("Mode"));
         assert!(string_representation.contains("Light"));
