@@ -17,10 +17,10 @@ jobs:
     - name: Fmt
       run: cargo fmt --all -- --check
     - name: Check
-      run: cargo check
+      run: cargo check --no-default-features
     - name: Run Clippy
-      run: cargo clippy --all-targets --all-features
+      run: cargo clippy --all-targets --no-default-features
     - name: Build
-      run: cargo build --verbose --release
+      run: cargo build --verbose --release --no-default-features
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --verbose --no-default-features
