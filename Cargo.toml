@@ -8,4 +8,8 @@ color-eyre = "0.6.3"
 chrono = "0.4.39"
 crossterm = "0.29.0"
 ratatui = "0.30.1"
-actually_beep = "0.1.1"
+actually_beep = { version = "0.1.1", optional = true }
+
+[features]
+default = ["beep_with_hz_and_millis"] # Enable it by default locally
+beep_with_hz_and_millis = ["dep:actually_beep"] # Define the feature and link it to the dependency
