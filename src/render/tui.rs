@@ -3,7 +3,7 @@ use ratatui::{
     layout::{Constraint, Direction, Flex, Layout, Rect},
     style::{Color, Stylize},
     symbols::border,
-    widgets::{Block, Padding, Paragraph, Widget},
+    widgets::{Block, Paragraph, Widget},
 };
 
 pub fn draw_lcd(
