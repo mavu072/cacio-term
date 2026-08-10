@@ -35,6 +35,30 @@ impl Alarm {
         }
     }
 
+    pub fn add_active_type(&mut self, at: AlarmType) -> bool {
+        // Dedup
+        if self.active_alarm_types.contains(&at) {
+            return false;
+        }
+
+        // Maximum 3 types
+        if self.active_alarm_types.len() < 3 {
+            self.active_alarm_types.push(at);
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn remove_active_type(&mut self, al_type: AlarmType) -> bool {
+        if let Some(index) = self.active_alarm_types.iter().position(|&at| at == al_type) {
+            self.active_alarm_types.remove(index);
+            true
+        } else {
+            false
+        }
+    }
+
     pub fn trigger(&mut self) {
         // 1. Check time exists
         let conf_time = match self.time {
@@ -100,7 +124,7 @@ impl AlarmType {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::{Datelike, Duration, Timelike};
+    use chrono::{Datelike, Timelike};
 
     #[test]
     fn test_set_time() {
@@ -132,6 +156,72 @@ mod tests {
     }
 
     #[test]
+    fn test_add_active_type() {
+        let mut alarm = Alarm::default();
+        let signal = AlarmType::Signal;
+        assert!(alarm.add_active_type(signal));
+        assert!(alarm.active_alarm_types.len() == 1);
+    }
+
+    #[test]
+    fn test_add_active_type_dedup() {
+        let mut alarm = Alarm::default();
+        assert!(alarm.add_active_type(AlarmType::Signal));
+        assert!(!alarm.add_active_type(AlarmType::Signal));
+        assert!(!alarm.add_active_type(AlarmType::Signal));
+        assert!(alarm.active_alarm_types.len() == 1);
+    }
+
+    #[test]
+    fn test_add_active_type_max_reached() {
+        let mut alarm = Alarm::default();
+        assert!(alarm.add_active_type(AlarmType::Alarm));
+        assert!(alarm.add_active_type(AlarmType::Signal));
+        assert!(alarm.add_active_type(AlarmType::Snooze));
+        assert!(!alarm.add_active_type(AlarmType::Signal));
+
+        assert!(alarm.active_alarm_types.len() == 3);
+    }
+
+    #[test]
+    fn test_remove_active_type() {
+        let mut alarm = Alarm::default();
+        let snooze = AlarmType::Snooze;
+        alarm.add_active_type(snooze);
+
+        assert!(alarm.active_alarm_types.len() == 1);
+        assert!(alarm.remove_active_type(AlarmType::Snooze));
+        assert!(alarm.active_alarm_types.len() == 0);
+    }
+
+    #[test]
+    fn test_remove_active_type_preserves_other() {
+        let mut alarm = Alarm::default();
+        alarm.add_active_type(AlarmType::Alarm);
+        alarm.add_active_type(AlarmType::Signal);
+        alarm.add_active_type(AlarmType::Snooze);
+
+        assert!(alarm.active_alarm_types.len() == 3);
+        assert!(alarm.remove_active_type(AlarmType::Signal));
+        assert!(alarm.active_alarm_types.len() == 2);
+    }
+
+    #[test]
+    fn test_remove_active_type_not_found() {
+        let mut alarm = Alarm::default();
+
+        assert!(alarm.active_alarm_types.len() == 0);
+        assert!(!alarm.remove_active_type(AlarmType::Snooze));
+        assert!(alarm.active_alarm_types.len() == 0);
+    }
+}
+
+#[cfg(test)]
+mod trigger_tests {
+    use super::*;
+    use chrono::Duration;
+
+    #[test]
     fn test_trigger() {
         let mut alarm = Alarm::default();
         let now = Local::now();
@@ -149,5 +239,28 @@ mod tests {
         assert!(alarm.set_time(now.hour(), now.minute(), now.second()));
         alarm.trigger();
         assert!(!alarm.has_triggered);
+    }
+}
+
+#[cfg(test)]
+mod alarm_type_tests {
+    use super::*;
+
+    #[test]
+    fn test_eq() {
+        let alarm_1 = AlarmType::Alarm;
+        let alarm_2 = AlarmType::Alarm;
+        let signal_1 = AlarmType::Signal;
+        let signal_2 = AlarmType::Signal;
+        let snooze_1 = AlarmType::Snooze;
+        let snooze_2 = AlarmType::Snooze;
+
+        assert!(alarm_1 == alarm_2);
+        assert!(signal_1 == signal_2);
+        assert!(snooze_1 == snooze_2);
+
+        assert!(alarm_1 != signal_1);
+        assert!(signal_1 != snooze_1);
+        assert!(alarm_1 != snooze_1);
     }
 }
