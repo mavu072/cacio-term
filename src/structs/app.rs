@@ -33,7 +33,7 @@ pub struct App {
 
 impl App {
     pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
-        while self.exit == false {
+        while !self.exit {
             // Run background tasks concurrently
             self.run_background_tasks();
 
