@@ -278,7 +278,7 @@ mod tests {
 
     #[test]
     fn test_render_layout() {
-        // Initialize app using Default trait
+        // Initialize app with Default trait and override relevant fields
         let app = App {
             clock: "12:00:00".to_string(),
             day: "Monday".to_string(),
