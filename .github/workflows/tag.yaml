@@ -1,0 +1,31 @@
+name: Create Tag
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: Create release tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create tag
+        uses: butlerlogic/action-autotag@1.1.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          strategy: regex
+          root: "/Cargo.toml"
+          regex_pattern: \"version\s?=\s?\"([0-9\.]*)\"\"
+          tag_prefix: "v"
