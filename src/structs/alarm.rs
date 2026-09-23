@@ -3,6 +3,7 @@ use crate::audio::beep::system_beep;
 use chrono::{Local, NaiveDate, NaiveTime, Timelike};
 
 #[derive(Debug, Default)]
+#[allow(dead_code)]
 pub struct Alarm {
     time: Option<NaiveTime>,
     date: Option<NaiveDate>,
@@ -10,6 +11,7 @@ pub struct Alarm {
     active_alarm_types: Vec<AlarmType>,
 }
 
+#[allow(dead_code)]
 impl Alarm {
     fn set_triggered_false(&mut self) {
         self.has_triggered = false;
