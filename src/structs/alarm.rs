@@ -193,7 +193,7 @@ mod tests {
 
         assert!(alarm.active_alarm_types.len() == 1);
         assert!(alarm.remove_active_type(AlarmType::Snooze));
-        assert!(alarm.active_alarm_types.len() == 0);
+        assert!(alarm.active_alarm_types.is_empty());
     }
 
     #[test]
@@ -212,9 +212,9 @@ mod tests {
     fn test_remove_active_type_not_found() {
         let mut alarm = Alarm::default();
 
-        assert!(alarm.active_alarm_types.len() == 0);
+        assert!(alarm.active_alarm_types.is_empty());
         assert!(!alarm.remove_active_type(AlarmType::Snooze));
-        assert!(alarm.active_alarm_types.len() == 0);
+        assert!(alarm.active_alarm_types.is_empty());
     }
 }
 
