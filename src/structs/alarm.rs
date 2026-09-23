@@ -142,7 +142,7 @@ mod tests {
     #[test]
     fn test_set_date() {
         let mut alarm = Alarm::default();
-        assert!(alarm.set_date(2026, 07, 01));
+        assert!(alarm.set_date(2026, 7, 1));
 
         let configured_time = alarm.date.unwrap();
         assert_eq!(configured_time.year(), 2026);
