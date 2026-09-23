@@ -73,10 +73,10 @@ impl Alarm {
         let current_time = now.time();
 
         // 2. Check Date
-        if let Some(conf_date) = self.date {
-            if conf_date != current_date {
-                return;
-            }
+        if let Some(conf_date) = self.date
+            && conf_date != current_date
+        {
+            return;
         }
 
         // 3. Check Time
