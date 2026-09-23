@@ -279,15 +279,15 @@ mod tests {
     #[test]
     fn test_render_layout() {
         // Initialize app using Default trait
-        let mut app = App::default();
-
-        // Override defaults with manual values
-        app.clock = "12:00:00".to_string();
-        app.day = "Monday".to_string();
-        app.year = "2026".to_string();
-        app.date_month = "6-19".to_string();
-        app.hour_format = 12;
-        app.light_timer = 3;
+        let app = App {
+            clock: "12:00:00".to_string(),
+            day: "Monday".to_string(),
+            year: "2026".to_string(),
+            date_month: "6-19".to_string(),
+            hour_format: 12,
+            light_timer: 3,
+            ..Default::default()
+        };
 
         // Debug log from Debug trait: run test with "cargo test -- --nocapture"
         println!("{:?}", app);
