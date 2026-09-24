@@ -3,6 +3,7 @@ mod datetime;
 mod globals;
 mod render;
 mod structs;
+mod util;
 
 use crate::globals::{DEFAULT_HOUR_FORMAT, WTC_BRAND, WTC_MODEL};
 use crate::structs::app::App;

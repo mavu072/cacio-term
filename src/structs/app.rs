@@ -2,6 +2,7 @@ use crate::datetime::local_datetime;
 use crate::render::tui::{draw_lcd, draw_paragraph};
 use crate::structs::alarm::AlarmType;
 use crate::structs::{alarm::Alarm, modes::WatchMode};
+use crate::util::tui::get_lcd_colors;
 
 use crossterm::event::{self, Event, KeyCode, KeyEventKind};
 use ratatui::{
@@ -27,8 +28,9 @@ pub struct App {
     hour_format: i8,
     light_on: bool,
     light_timer: i8,
-    exit: bool,
     alarm: Alarm,
+    input_mode: bool,
+    exit: bool,
 }
 
 impl App {
@@ -65,6 +67,17 @@ impl App {
 
     fn draw(&self, frame: &mut Frame) {
         frame.render_widget(self, frame.area());
+    }
+
+    fn run_background_tasks(&mut self) {
+        // Update live clock
+        self.update_live_clock();
+
+        // Handle light switch
+        self.light_off();
+
+        // Trigger alarm
+        self.alarm.trigger();
     }
 
     fn header(&self) -> Line<'static> {
@@ -185,36 +198,12 @@ impl App {
             }
         }
     }
-
-    fn get_colors(&self) -> (Color, Color) {
-        // Get light on/off color
-
-        let (fg_col, bg_col) = if self.light_on {
-            (Color::Rgb(0, 0, 0), Color::Rgb(80, 158, 49))
-        } else {
-            (Color::Rgb(0, 0, 0), Color::Rgb(43, 84, 27))
-        };
-
-        (fg_col, bg_col)
-    }
-
-    fn run_background_tasks(&mut self) {
-        // Update live clock
-        self.update_live_clock();
-
-        // Handle light switch
-        self.light_off();
-
-        // Trigger alarm
-        self.alarm.trigger();
-    }
 }
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         // Foreground and Background colors
-        let get_colors = self.get_colors();
-        let (fg_col, bg_col) = get_colors;
+        let (fg_col, bg_col) = get_lcd_colors(self.light_on);
 
         // === LAYOUT ===
         // Full screen area
