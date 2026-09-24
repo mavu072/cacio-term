@@ -1,0 +1,53 @@
+name: Create Tag on Codeberg Mirror
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Target branch to tag (e.g. main)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  CODEBERG_API_KEY: ${{ secrets.CODEBERG_API_KEY }}
+  REPO_NAME: ${{ secrets.REPO_NAME }}
+  REPO_OWNER: ${{ secrets.REPO_OWNER }}
+  TARGET_BRANCH: ${{ github.ref_name || inputs.target_branch }}
+
+jobs:
+  tag:
+    name: Create release tag on Codeberg
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current version
+        id: get-current-ver
+        run: |
+            echo "TAG_VERSION=$(awk '/package/, /dependencies/' Cargo.toml | grep -Po '([0-9]\.[0-9]\.[0-9])')" >> "$GITHUB_ENV"
+
+      - name: Create tag in Codeberg
+        env:
+          TAG_PREFIX: 'v'
+          TAG_VERSION: ${{ steps.get-current-ver.outputs.TAG_VERSION }}
+        if: ${{ env.TAG_VERSION != null }}
+        run: |
+          curl -X 'POST' \
+            'https://codeberg.org/api/v1/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/tags' \
+            -H 'accept: application/json' \
+            -H 'Authorization: token ${{ env.CODEBERG_API_KEY }}' \
+            -H 'Content-Type: application/json' \
+            -d '{
+            "tag_name": "${{ env.TAG_PREFIX }}${{ env.TAG_VERSION }}",
+            "target": "${{ env.TARGET_BRANCH }}"
+          }'

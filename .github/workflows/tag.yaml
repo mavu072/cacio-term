@@ -1,9 +1,10 @@
 name: Create Tag
 
 on:
-  push:
-    branches:
-      - main
+  # Disable tagging on Github. See issue: https://codeberg.org/mavu072/cacio-term/issues/8
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
 
 permissions:
