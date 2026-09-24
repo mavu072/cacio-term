@@ -1,4 +1,4 @@
-name: Create Tag on Codeberg Mirror
+name: Create Tag on Codeberg.org
 
 on:
   push:
