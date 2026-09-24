@@ -1,18 +1,38 @@
+<p align="center">
+  <br />
+  <a href="https://codeberg.org/mavu072/cacio-term">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/get-it-on-codeberg-dark.png">
+      <img src="assets/get-it-on-codeberg.png" width="300px">
+    </picture>
+  </a>
+</p>
+
+<p align="center">
+  <strong>cacio-term</strong> TUI watch emulator built using Rust with ratatui, and crossterm
+</p>
+
+<p align="center">
+  <img alt="GitHub License" src="https://img.shields.io/github/license/mavu072/cacio-term">
+  <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/mavu072/cacio-term">
+  <img alt="CI" src="https://github.com/mavu072/cacio-term/actions/workflows/ci.yaml/badge.svg" />
+  <img alt="Casio Illuminator" src="https://img.shields.io/badge/Casio-Illuminator-green">
+</p>
+<br />
+
 # cacio-term
 
-A high-performance Terminal User Interface (TUI) that recreates the iconic **Casio Illuminator** digital watch, built in **Rust** using the **`ratatui`** framework and the **`crossterm`** backend.
-
-## 100% No-AI Project
-
-This entire codebase was architected, written, and debugged entirely by hand. No AI code generation, no LLM autocomplete. The choice to go 100% No-AI is entirely educational, forcing me to truly learn the fundamentals of Rust.
+A high-performance Terminal User Interface (TUI) that emulates the iconic **Casio Illuminator** digital watch, built in **Rust** using the **`ratatui`** framework and the **`crossterm`** backend.
 
 ## Features
 
-* **Real-Time Module:** High-accuracy clock mirroring the classic Casio digital layout (Time, Date, Day of the Week).
-* **Cross-Platform Compatibility:** Runs on Linux, macOS, and Windows thanks to the `crossterm` backend.
-* **Mode Cycling:** Watch state logic for switching between Timekeeping, Alarm, Dual Time and Stopwatch modes.
+* **Cross-Platform Compatibility:** Runs on Linux, macOS, and Windows.
+* **Real-Time Module:** Accurate clock mirroring the Casio digital layout (Time, Date, Day of the Week).
+* **Mode Cycling:** Supports Timekeeping, Alarm, Dual Time and Stopwatch watch modes.
 * **Illuminator Backlight:** Inverts and recolors TUI widgets to simulate the retro LCD glow.
-* **Clean Rust Engine:** Fast performance, and strict type safety from `Rust`.
+
+> [!NOTE]
+> This software is still early development, and not all features are available yet.
 
 ## Controls & Button Mapping
 
@@ -32,7 +52,7 @@ The application maps keyboard shortcuts to the physical buttons of a Casio watch
 Ensure you have [Rust and Cargo installed](https://rust-lang.org), then clone and build directly from source:
 
 ```bash
-git clone https://codeberg.org
+git clone https://codeberg.org/mavu072/cacio-term.git
 cd cacio-term
 cargo run --release
 ```
@@ -61,6 +81,10 @@ All contributions are welcome!
 1. Fork the project repository.
 2. Hand-code your feature or bug fix.
 3. Open a Pull Request.
+
+## AI Usage
+
+This entire codebase was architected, written, and debugged entirely by hand. No AI code generation, no LLM autocomplete. The choice to go 100% No-AI is entirely educational, forcing me to truly learn the fundamentals of Rust.
 
 ## License
 
