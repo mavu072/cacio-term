@@ -36,6 +36,10 @@ jobs:
         run: |
             echo "TAG_VERSION=$(awk '/package/, /dependencies/' Cargo.toml | grep -Po '([0-9]\.[0-9]\.[0-9])')" >> "$GITHUB_ENV"
 
+      - name: Check version
+        run: |
+            echo "tag-ver: $TAG_VERSION, branch: $TARGET_BRANCH, repo: $REPO_NAME"
+
       - name: Create tag in Codeberg
         env:
           TAG_PREFIX: 'v'
