@@ -8,6 +8,12 @@ repository = "https://codeberg.org/mavu072/cacio-term.git"
 homepage = "https://codeberg.org/mavu072/cacio-term"
 authors = ["mavu072 <mavu072@noreply.codeberg.org>"]
 license-file = "LICENSE"
+exclude = [
+    "assets/*",
+    ".zed/*",
+    ".forgejo/*",
+    ".github/*",
+]
 
 [dependencies]
 color-eyre = "0.6.3"
