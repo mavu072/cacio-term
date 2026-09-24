@@ -5,11 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      target_branch:
-        description: "Target branch to tag (e.g. main)"
-        required: true
-        type: string
 
 permissions:
   contents: read
@@ -18,7 +13,7 @@ env:
   CODEBERG_API_KEY: ${{ secrets.CODEBERG_API_KEY }}
   REPO_NAME: ${{ secrets.REPO_NAME }}
   REPO_OWNER: ${{ secrets.REPO_OWNER }}
-  TARGET_BRANCH: ${{ github.ref_name || inputs.target_branch }}
+  TARGET_BRANCH: ${{ github.ref_name }}
 
 jobs:
   tag:
@@ -43,7 +38,7 @@ jobs:
       - name: Create tag in Codeberg
         env:
           TAG_PREFIX: 'v'
-        if: ${{ env.TAG_VERSION != null }}
+        if: ${{ env.TAG_VERSION != null && env.TARGET_BRANCH != null}}
         run: |
           curl -X 'POST' \
             'https://codeberg.org/api/v1/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/tags' \
