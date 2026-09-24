@@ -27,5 +27,6 @@ jobs:
         with:
           strategy: regex
           root: "Cargo.toml"
-          regex_pattern: \"version\s?=\s?\"([0-9\.]*)\"\"
+          regex_pattern: |
+              version\s?=\s?\"([0-9\.]*)\"
           tag_prefix: "v"
