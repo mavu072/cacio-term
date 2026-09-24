@@ -43,7 +43,7 @@ jobs:
       - name: Create tag in Codeberg
         env:
           TAG_PREFIX: 'v'
-          TAG_VERSION: ${{ steps.get-current-ver.outputs.TAG_VERSION }}
+        if: ${{ env.TAG_VERSION != null }}
         run: |
           curl -X 'POST' \
             'https://codeberg.org/api/v1/repos/${{ env.REPO_OWNER }}/${{ env.REPO_NAME }}/tags' \
