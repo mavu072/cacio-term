@@ -2,6 +2,12 @@
 name = "cacio-term"
 version = "0.1.1"
 edition = "2024"
+description = "A TUI digital watch emulator"
+keywords = ["tui", "emulator", "rust", "digital", "watch"]
+repository = "https://codeberg.org/mavu072/cacio-term.git"
+homepage = "https://codeberg.org/mavu072/cacio-term"
+authors = ["mavu072 <mavu072@noreply.codeberg.org>"]
+license-file = "LICENSE"
 
 [dependencies]
 color-eyre = "0.6.3"

@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>cacio-term</strong> TUI watch emulator built using Rust with ratatui, and crossterm
+  <strong>cacio-term</strong> TUI digital watch emulator built using Rust with ratatui, and crossterm
 </p>
 
 <p align="center">
