@@ -2,8 +2,8 @@
   <br />
   <a href="https://codeberg.org/mavu072/cacio-term">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/get-it-on-codeberg-dark.png">
-      <img src="assets/get-it-on-codeberg.png" width="300px">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/2f7b2b8a-6867-4b0e-9e6e-fa37f7423998">
+      <img src="https://github.com/user-attachments/assets/b920131b-ca86-45e3-94eb-1e1bdc874c9b" width="300px">
     </picture>
   </a>
 </p>
@@ -16,7 +16,6 @@
   <img alt="GitHub License" src="https://img.shields.io/github/license/mavu072/cacio-term">
   <img alt="GitHub top language" src="https://img.shields.io/github/languages/top/mavu072/cacio-term">
   <img alt="CI" src="https://github.com/mavu072/cacio-term/actions/workflows/ci.yaml/badge.svg" />
-  <img alt="Casio Illuminator" src="https://img.shields.io/badge/Casio-Illuminator-green">
 </p>
 <br />
 
@@ -49,7 +48,13 @@ The application maps keyboard shortcuts to the physical buttons of a Casio watch
 
 ## Installation
 
-Ensure you have [Rust and Cargo installed](https://rust-lang.org), then clone and build directly from source:
+Ensure you have [Rust and Cargo installed](https://rust-lang.org). Install from [crates.io](https://crates.io):
+
+```bash
+cargo install cacio-term
+```
+
+Alternatively, you can clone and build directly from source:
 
 ```bash
 git clone https://codeberg.org/mavu072/cacio-term.git
