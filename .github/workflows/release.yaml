@@ -24,8 +24,8 @@ jobs:
         id: auth
         uses: rust-lang/crates-io-auth-action@v1
 
-      - name: Build
-        run: cargo build --verbose --release --no-default-features
+      - name: Install dependency # Missing dependency required on linux os.
+        run: sudo apt-get install -y libasound2-dev
 
       - name: Publish crate
         run: cargo publish
