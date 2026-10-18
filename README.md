@@ -2,8 +2,8 @@
   <br />
   <a href="https://codeberg.org/mavu072/cacio-term">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/2f7b2b8a-6867-4b0e-9e6e-fa37f7423998">
-      <img src="https://github.com/user-attachments/assets/b920131b-ca86-45e3-94eb-1e1bdc874c9b" width="300px">
+      <source media="(prefers-color-scheme: dark)" srcset="/assets/codeberg_badge_dark.png">
+      <img src="/assets/codeberg_badge.png" width="300px">
     </picture>
   </a>
 </p>
