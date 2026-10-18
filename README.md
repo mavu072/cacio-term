@@ -2,8 +2,8 @@
   <br />
   <a href="https://codeberg.org/mavu072/cacio-term">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="/assets/codeberg_badge_dark.png">
-      <img src="/assets/codeberg_badge.png" width="300px">
+      <source media="(prefers-color-scheme: dark)" srcset="./assets/badges/codeberg_badge_dark.png">
+      <img src="./assets/badges/codeberg_badge.png" width="300px">
     </picture>
   </a>
 </p>
@@ -21,7 +21,7 @@
 
 # cacio-term
 
-A high-performance Terminal User Interface (TUI) that emulates the iconic **Casio Illuminator** digital watch, built in **Rust** using the **`ratatui`** framework and the **`crossterm`** backend.
+A simple Terminal User Interface (TUI) that emulates the iconic **Casio Illuminator** digital watch, built in **Rust** using the **`ratatui`** framework and **`crossterm`**.
 
 ## Features
 
@@ -39,12 +39,13 @@ The application maps keyboard shortcuts to the physical buttons of a Casio watch
 
 | Keyboard Key | Watch Button | Function |
 | :--- | :--- | :--- |
-| `M` / `Tab` | **MODE** | Cycle through Time ➔ Alarm ➔ Stopwatch |
-| `L` / `Space`| **LIGHT** | Trigger the Illuminator LCD light |
-| `A` | **ADJUST** | Hold to enter setting mode (Hour/Minute adjustments) |
-| `S` | **START/STOP** | Start/stop the stopwatch |
-| `H` | **12/24H** | Toggle 12/24-hour formats |
-| `Q` / `Esc` | — | Gracefully exit `cacio-term` |
+| `A` | **ADJUST** | Hold to enter setting screen (Hour/Minute adjustments) |
+| `B` / `Space`| **LIGHT** | Illuminate the display |
+| `C` / `Tab` | **MODE** | Cycle through Time ➔ Alarm ➔ Stopwatch |
+| `D` | **12/24H** | Toggle 12/24-hour formats |
+| `Q` / `Esc` | — | Gracefully exit |
+
+See the [help manual](./assets/help.txt) for the full guide.
 
 ## Installation
 
