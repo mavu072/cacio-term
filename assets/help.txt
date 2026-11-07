@@ -1,0 +1,69 @@
+
+                                         $(c3)$(bold)Cacio TUI$(reset)$(reset)
+                                    $(dim)by Avuyile Mgxotshwa$(reset)
+
+$(dim)==============================================================================================$(reset)
+                                         $(bold)Controls$(reset)
+$(dim)==============================================================================================$(reset)
+
+$(bold)Basic Controls$(reset)
+- B             -> Illuminate the display
+- C / Tab       -> Cycle modes
+- D             -> Toggle 12/24-hour format
+- Q / Esc       -> Gracefully exit
+
+$(bold)Timekeeping Mode$(reset)
+$(dim)Use to set and view the current date and time.$(reset)
+- A             -> Hold down until the seconds setting flashes, this indicates the setting screen
+- C             -> Move the flashing in sequence:
+                 seconds -> C -> hour -> C -> minutes ->
+                 C -> year -> C -> month -> C -> day C -> (back to seconds)
+
+$(dim)Timekeeping - Setting screen$(reset)
+- D             -> Change the flashing setting:
+                 Seconds | Press 'D' to reset to 00
+                 H/M/Y/M/D | Press 'D' to increase the setting
+
+$(dim)Pressing 'D' while the seconds are in the range of 30 to 59 resets them to 00 and adds 1 to
+ the minutes. In the range of 00 to 29, the minutes are unchanged.$(reset)
+- A             -> Exit setting screen
+
+$(bold)Alarm Mode$(reset)
+- D             -> Pressing 'D' in Alarm mode toggles alarm screen and Hourly Time Signal screen
+                 5:00 -> D -> :00 -> D -> 5:00 -> D (back to 5:00)
+
+$(dim)An alarm type is determined by the setting you make.$(reset)
+- Daily alarm   -> Set the hour and minutes.
+- Date alarm    -> Set month, day, hour and minutes.
+- 1 month alarm -> Set month, hour and minutes.
+- Monthly alarm -> Set the day, hour, minutes.
+
+$(dim)Alarm - Setting screen$(reset)
+- D             -> Press 'D' to display alarm screen:
+                 5:00 (no :00 this indicates Hourly Time Signal screen)
+- A             -> Hold down until the hour setting flashes, this indicates the setting screen
+- C             -> Move the flashing in sequence:
+                 hour -> C -> minutes -> C -> month -> C -> day -> C (back to hour)
+- D             -> Press 'D' to increas the flashing setting:
+                 To unset a setting set it to -/-- by pressing 'D' until -/-- appears.
+                 To set an alarm without a month (Daily alarm), set the month to -.
+                 To set an alarm without a day (Daily or Monthly alarm), set the day to --.
+- A             -> Exit setting screen
+
+$(dim)Alarm Operation$(reset)
+The alarm tone sounds for 10 seconds.
+- When Snooze alarm is set, the alarm tone repeats up to seven times every five minutes.
+- Pressing any button A/B/C/D stops the alarm tone.
+
+$(dim)Select the alarm type$(reset)
+
+
+$(bold)Stopwatch Mode$(reset)
+-
+
+
+$(bold)Dual Time Mode$(reset)
+-
+
+
+$(dim)==============================================================================================$(reset)
