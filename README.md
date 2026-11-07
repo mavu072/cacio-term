@@ -40,8 +40,8 @@ The application maps keyboard shortcuts to the physical buttons of a Casio watch
 | Keyboard Key | Watch Button | Function |
 | :--- | :--- | :--- |
 | `A` | **ADJUST** | Hold to enter setting screen (Hour/Minute adjustments) |
-| `B` / `Space`| **LIGHT** | Illuminate the display |
-| `C` / `Tab` | **MODE** | Cycle through Time ➔ Alarm ➔ Stopwatch |
+| `B` | **LIGHT** | Illuminate the display |
+| `C` | **MODE** | Cycle through Time ➔ Alarm ➔ Stopwatch |
 | `D` | **12/24H** | Toggle 12/24-hour formats |
 | `Q` / `Esc` | — | Gracefully exit |
 
