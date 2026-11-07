@@ -8,7 +8,7 @@ $(dim)==========================================================================
 
 $(bold)Basic Controls$(reset)
 - B             -> Illuminate the display
-- C / Tab       -> Cycle modes
+- C             -> Cycle modes
 - D             -> Toggle 12/24-hour format
 - Q / Esc       -> Gracefully exit
 
@@ -23,9 +23,8 @@ $(dim)Timekeeping - Setting screen$(reset)
 - D             -> Change the flashing setting:
                  Seconds | Press 'D' to reset to 00
                  H/M/Y/M/D | Press 'D' to increase the setting
-
-$(dim)Pressing 'D' while the seconds are in the range of 30 to 59 resets them to 00 and adds 1 to
- the minutes. In the range of 00 to 29, the minutes are unchanged.$(reset)
+                 Pressing 'D' while the seconds are in the range of 30 to 59 resets them to 00 and
+                 adds 1 to the minutes. In the range of 00 to 29, the minutes are unchanged.
 - A             -> Exit setting screen
 
 $(bold)Alarm Mode$(reset)
@@ -56,6 +55,7 @@ The alarm tone sounds for 10 seconds.
 - Pressing any button A/B/C/D stops the alarm tone.
 
 $(dim)Select the alarm type$(reset)
+-
 
 
 $(bold)Stopwatch Mode$(reset)
