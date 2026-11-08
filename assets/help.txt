@@ -80,11 +80,11 @@ In Alarm mode:
                  Press 'D' again to exit the alarm setting screen and save your setting.
 
 $(bold)Stopwatch Mode$(reset)
--
+- Coming soon...
 
 
 $(bold)Dual Time Mode$(reset)
--
+- Coming soon...
 
 
 $(dim)======================================================================================================$(reset)
