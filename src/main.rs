@@ -1,25 +1,18 @@
-mod audio;
-mod datetime;
-mod globals;
-mod render;
-mod structs;
+/*
+ * A TUI digital watch emulator.
+ *
+ * Author: Avuyile Mgxotshwa
+ * Date: 10 October 2026
+ * License: Refer to LICENSE file
+ *
+ * Contributors:
+ * - Avuyile Mgxotshwa <mavu072@noreply.codeberg.org>
+ */
 
-use crate::globals::{DEFAULT_HOUR_FORMAT, WTC_BRAND, WTC_MODEL};
-use crate::structs::app::App;
+mod init;
 
-// use color_eyre::eyre::Ok;
-use std::io;
+fn main() {
+    println!("Starting up...");
 
-// Entrypoint
-fn main() -> io::Result<()> {
-    // Create app with defaults
-    let mut app = App::default();
-
-    // Override specific fields with global watch constants
-    app.set_brand(WTC_BRAND);
-    app.set_model(WTC_MODEL);
-    app.set_hour_format(DEFAULT_HOUR_FORMAT);
-
-    // Run app
-    ratatui::run(|terminal| app.run(terminal))
+    init::print_help();
 }
