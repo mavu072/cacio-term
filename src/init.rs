@@ -4,7 +4,7 @@
  * The **Init** module inlcudes operations that need to run right before the main program starts.
  * All it does now is prints the help manual, but it will handle all pre-startup tasks.
  *
- * **Note:** It is up to the caller to decise which operations to call.
+ * **Note:** It is up to the caller to decide which operations to call.
  */
 
 /// Prints the help manual to the terminal.
