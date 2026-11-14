@@ -25,10 +25,10 @@ A simple Terminal User Interface (TUI) that emulates the iconic **Casio Illumina
 
 ## Features
 
-* **Cross-Platform Compatibility:** Runs on Linux, macOS, and Windows.
-* **Real-Time Module:** Accurate clock mirroring the Casio digital layout (Time, Date, Day of the Week).
-* **Mode Cycling:** Supports Timekeeping, Alarm, Dual Time and Stopwatch watch modes.
-* **Illuminator Backlight:** Inverts and recolors TUI widgets to simulate the retro LCD glow.
+* **Cross-Platform:** Runs on Linux, macOS, and Windows.
+* **Realtime Clock:** Accurate clock mirroring the Casio digital layout (Time, Date, Day of the Week).
+* **Multiple Modes:** Supports different watch modes: Timekeeping, Alarm, Dual Time (coming soon) and Stopwatch (coming soon).
+* **Illuminated Backlight:** Inverts and recolors TUI widgets to simulate the retro LCD glow.
 
 > [!NOTE]
 > This software is still early development, and not all features are available yet.
